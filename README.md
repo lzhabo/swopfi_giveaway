@@ -1,1 +1,1 @@
-# Waves ducks bot
+# Swopfi give away bot
