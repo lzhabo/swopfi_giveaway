@@ -2,6 +2,9 @@ import { initMongo } from "./services/mongo";
 import telegramService from "./services/telegramService";
 import msg from "./messages_lib";
 import { GiveAway } from "./models/GiveAway";
+import { checkGiveAwayRetweets } from "./services/postWatcher";
+
+const cron = require("node-cron");
 
 require("dotenv").config();
 initMongo().then();
@@ -52,3 +55,5 @@ telegramService.telegram.onText(
     );
   }
 );
+
+// cron.schedule(" * * * *", checkGiveAwayRetweets);
