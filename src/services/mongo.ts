@@ -9,9 +9,10 @@ export const initMongo = () =>
     })
     .then(() => {
       console.log("\nConnected to MongoDB ✅  ");
-      /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
     })
     .catch((err) => {
+      console.log(process.env);
+      console.log(process.env.MONGO_URL);
       console.log(
         `❌  MongoDB connection error. Please make sure MongoDB is running. ${err}`
       );
