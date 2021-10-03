@@ -1,4 +1,4 @@
 const msg = {
-  welcome: "HEllo pidor! U should send me some link of ur retweet",
+  welcome: "Hello pidor! U should send me some link of ur retweet",
 };
 export default msg;
