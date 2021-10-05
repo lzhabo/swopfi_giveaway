@@ -5,8 +5,8 @@ export interface IUser {
   telegramId?: number;
   walletAddress?: string;
   twitterUsername?: string;
-  isMoreThan50Subscribers?: boolean;
-  twittId?: number;
+  twitterId?: number;
+  campaign: number;
 }
 
 export type TUserDocument = Document & IUser;
@@ -17,7 +17,8 @@ const UserSchema = new mongoose.Schema(
     walletAddress: { type: String, required: false },
     twitterUsername: { type: String, required: false },
     isMoreThan50Subscribers: { type: Boolean, required: false },
-    twittId: { type: Number, required: false },
+    twitterId: { type: Number, required: false },
+    campaign: { type: Number, required: false },
   },
   { timestamps: true }
 );

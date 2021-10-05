@@ -1,8 +1,9 @@
 import { initMongo } from "./services/mongo";
 import telegramService from "./services/telegramService";
-import msg from "./messages_lib";
 import { GiveAway } from "./models/GiveAway";
-import { checkGiveAwayRetweets } from "./services/postWatcher";
+import * as moment from "moment";
+import msg from "./messages_lib";
+import { checkTelegram, getUserByUserName } from "./services/rulesServise";
 
 const cron = require("node-cron");
 
@@ -13,10 +14,54 @@ const adminId = 383909141;
 const parse_mode = "Markdown";
 
 telegramService.telegram.onText(/\/start/, async ({ chat }) => {
-  await telegramService.telegram.sendMessage(chat.id, msg.welcome, {
+  // const today = moment();
+  const today = moment("2021-12-04T10:00:00");
+  console.log("today", today);
+  let text = "";
+  if (today > moment("2021-12-05T10:00:00")) {
+    await telegramService.telegram.sendMessage(
+      chat.id,
+      msg.allCompaniesAreFinished,
+      {
+        parse_mode,
+      }
+    );
+    return;
+  }
+  if (
+    today >= moment("2021-12-03T10:00:00") &&
+    today < moment("2021-12-05T10:00:00")
+  ) {
+    text = msg.takePart1;
+  } else today > moment("2021-12-05T10:00:00");
+  {
+    text = msg.takePart2;
+  }
+  await telegramService.telegram.sendMessage(chat.id, text, {
+    parse_mode,
+    reply_markup: {
+      keyboard: [[{ text: msg.ihavedoneitall }]],
+    },
+  });
+});
+
+telegramService.telegram.onText(/I've done it all!/, async ({ chat, from }) => {
+  //todo run check func
+  await telegramService.telegram.sendMessage(chat.id, msg.triggerCheck, {
     parse_mode,
   });
 });
+
+telegramService.telegram.onText(
+  /^@[a-zA-Z0-9]/,
+  async ({ chat, from }, match) => {
+    // const reply = await getUserByUserName(match.input.substring(1));
+    await checkTelegram(from.id.toString());
+    await telegramService.telegram.sendMessage(chat.id, "wow", {
+      parse_mode,
+    });
+  }
+);
 
 telegramService.telegram.onText(/\/canIAddNewPost?/, async ({ chat, from }) => {
   if (from.id !== adminId) {
@@ -56,4 +101,7 @@ telegramService.telegram.onText(
   }
 );
 
+// cron.schedule(" * * * *", checkGiveAwayRetweets);
+
+//run same cron on particular date to note thta second compain is started
 // cron.schedule(" * * * *", checkGiveAwayRetweets);

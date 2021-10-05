@@ -31,9 +31,6 @@ export const checkGiveAwayRetweets = async () => {
       $gte: new Date(2021, 10, 3),
     },
   });
-  // await Promise.all(
-  //   giveaways.map(async (giveaway) => checkRetweetsForTweet(giveaway))
-  // );
   for (let index in giveaways) {
     await checkRetweetsForTweet(giveaways[index]);
   }
