@@ -1,19 +1,14 @@
 import axios from "axios";
-import { token } from "./index";
 
 const foo = async () => {
-  const arr = [1443901303957168133, 1443901303957168133];
-  await Promise.all(
-    Array.from(arr, async (id) => {
-      const res = await axios.get(
-        `https://api.twitter.com/1.1/statuses/retweeters/ids.json?id=${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      console.log(res.data.errors);
-    })
-  );
+  const res = await axios
+    .get(
+      `https://api.twitter.com/1.1/lists/subscribers/show.json?slug=team&owner_screen_name=twitter&screen_name=episod`,
+      {
+        headers: { ...process.env },
+      }
+    )
+    .catch(({ response: { statusText } }) => console.log(statusText));
 };
 
 foo();

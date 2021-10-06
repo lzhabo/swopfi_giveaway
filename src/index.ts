@@ -1,9 +1,15 @@
 import { initMongo } from "./services/mongo";
 import telegramService from "./services/telegramService";
-import { GiveAway } from "./models/GiveAway";
 import * as moment from "moment";
 import msg from "./messages_lib";
-import { checkTelegram, getUserByUserName } from "./services/rulesServise";
+import {
+  checkIfUserRetweeted,
+  checkTelegram,
+  checkUserTwitterSubscribe,
+  getAddressFromDescription,
+} from "./services/rulesServise";
+import { mongo } from "mongoose";
+import { User } from "./models/User";
 
 const cron = require("node-cron");
 
@@ -45,59 +51,47 @@ telegramService.telegram.onText(/\/start/, async ({ chat }) => {
   });
 });
 
-telegramService.telegram.onText(/I've done it all!/, async ({ chat, from }) => {
+telegramService.telegram.onText(/I've done it all!/, async ({ from }) => {
   //todo run check func
-  await telegramService.telegram.sendMessage(chat.id, msg.triggerCheck, {
+  await telegramService.telegram.sendMessage(from.id, msg.triggerCheck, {
     parse_mode,
   });
 });
 
-telegramService.telegram.onText(
-  /^@[a-zA-Z0-9]/,
-  async ({ chat, from }, match) => {
-    // const reply = await getUserByUserName(match.input.substring(1));
-    await checkTelegram(from.id.toString());
-    await telegramService.telegram.sendMessage(chat.id, "wow", {
-      parse_mode,
-    });
-  }
-);
-
-telegramService.telegram.onText(/\/canIAddNewPost?/, async ({ chat, from }) => {
-  if (from.id !== adminId) {
-    await telegramService.telegram.sendMessage(chat.id, "*no,idi nahyi*", {
-      parse_mode,
-    });
-  } else {
-    await telegramService.telegram.sendMessage(
-      chat.id,
-      "ofc u can!, please use /add operator for this",
-      {
-        parse_mode,
+telegramService.telegram.on(
+  "message",
+  async ({ chat, from, text: twitterUsername }) => {
+    const success = await Promise.all([
+      await checkTelegram(from.id.toString()),
+      // await checkUserTwitterSubscribe(twitterUsername),
+      await checkIfUserRetweeted(twitterUsername),
+    ]); //.then((arr) => arr.every((v) => v));
+    console.log(success);
+    if (success.every((v) => v)) {
+      const walletAddress = await getAddressFromDescription(twitterUsername);
+      const users = await User.find({ campaign: process.env.CAMPAIGN });
+      if (users.length > 500) {
+        await telegramService.telegram.sendMessage(
+          chat.id,
+          "Sorry, there is not free places",
+          {
+            parse_mode,
+          }
+        );
+        return;
       }
-    );
-  }
-});
-
-telegramService.telegram.onText(
-  /\/add[ \t]*(.*)/,
-  async ({ chat, from }, match) => {
-    const tweetsForGive = match[1].split(",");
-    for (let index in match[1].split(",")) {
-      const tweet = tweetsForGive[index].split(" ");
-      console.log(new Date(tweet[1]));
-      await GiveAway.create({
-        postId: tweet[0],
-        expirationDate: new Date(tweet[1]),
+      await User.create({
+        telegramId: from.id,
+        walletAddress,
+        twitterUsername,
+        campaign: process.env.CAMPAIGN,
       });
-    }
-    await telegramService.telegram.sendMessage(
-      chat.id,
-      `вы добавили ${tweetsForGive.length} пост-(ов) 🤌🏻`,
-      {
+      await telegramService.telegram.sendMessage(chat.id, "wow", {
         parse_mode,
-      }
-    );
+      });
+    } else {
+      await telegramService.telegram.sendMessage(chat.id, "соси жопу уебок");
+    }
   }
 );
 
