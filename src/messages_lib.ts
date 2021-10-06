@@ -1,7 +1,4 @@
 const msg = {
-  welcome: "Hello pidor! U should send me some link of ur retweet",
-  promo1: "Promotion campaign #1 is running now.\n",
-  promo2: "Promotion campaign #2 is running now.\n",
   takePart1:
     "How to participate:\n\n" +
     "1️⃣ Make sure you have at least 50 followers on Twitter.\n" +
@@ -29,5 +26,7 @@ const msg = {
     "you will receive имя_токена; if not, you will get your USDN back. \n",
   somethingIsNotDone:
     "Sorry, the quest is not completed. These requirements are still not met:\n",
+  pleaseDoAllRequiredRules:
+    "Sorry, the quest is not completed. Not all requirements are met",
 };
 export default msg;
