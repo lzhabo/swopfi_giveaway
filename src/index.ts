@@ -5,7 +5,8 @@ import {
   checkIfUserRetweeted,
   checkTelegram,
   getAddressFromDescription,
-  checkUserTwitterSubscribe,
+  checkUserTwitterSubscribers,
+  checkUserExists,
 } from "./services/rulesServise";
 import { User } from "./models/User";
 
@@ -42,19 +43,36 @@ telegramService.telegram.onText(/I've done it all!/, async ({ from }) => {
 
 telegramService.telegram.on(
   "message",
-  async ({ chat, from, text: twitterUsername }) => {
+  async ({ from, text: twitterUsername }) => {
+    if (twitterUsername === "/start" || twitterUsername === "I've done it all!")
+      return;
+    if (!(await checkUserExists(twitterUsername))) {
+      await telegramService.telegram.sendMessage(
+        from.id,
+        "There is no user with such username"
+      );
+      return;
+    }
+    await telegramService.telegram.sendMessage(from.id, "Checking...");
     const success = await Promise.all([
       await checkTelegram(from.id.toString()),
-      await checkUserTwitterSubscribe(twitterUsername),
+      await checkUserTwitterSubscribers(twitterUsername),
       await checkIfUserRetweeted(twitterUsername),
     ]);
     if (success.every((v) => v)) {
       const walletAddress = await getAddressFromDescription(twitterUsername);
       const users = await User.find({ campaign: process.env.CAMPAIGN });
-      if (users.length > 500) {
-        await telegramService.telegram.sendMessage(chat.id, msg.noFreePlaces, {
-          parse_mode,
-        });
+      const findCopies = await User.find({
+        campaign: process.env.CAMPAIGN,
+        telegramId: from.id,
+      });
+
+      if (findCopies) {
+        await telegramService.telegram.sendMessage(from.id, msg.noFreePlaces);
+        return;
+      }
+      if (users.length >= 500) {
+        await telegramService.telegram.sendMessage(from.id, msg.noFreePlaces);
         return;
       }
       await User.create({
@@ -63,12 +81,10 @@ telegramService.telegram.on(
         twitterUsername,
         campaign: process.env.CAMPAIGN,
       });
-      await telegramService.telegram.sendMessage(chat.id, msg.success, {
-        parse_mode,
-      });
+      await telegramService.telegram.sendMessage(from.id, msg.success);
     } else {
       await telegramService.telegram.sendMessage(
-        chat.id,
+        from.id,
         msg.pleaseDoAllRequiredRules
       );
     }
