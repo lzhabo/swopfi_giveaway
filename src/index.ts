@@ -17,10 +17,7 @@ const parse_mode = "Markdown";
 
 telegramService.telegram.onText(/\/start/, async ({ from }) => {
   let text;
-  if (process.env.CAMPAING === "1") {
-    text = msg.takePart1;
-  } else if (process.env.CAMPAING === "2") {
-    text = msg.takePart1;
+  if (process.env.CAMPAING === "1" || process.env.CAMPAING === "2") {
   } else {
     text = msg.allCompaniesAreFinished;
   }
