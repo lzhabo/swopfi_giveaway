@@ -22,7 +22,7 @@ const pingTwitter = (url: string) =>
 export const checkUserTwitterSubscribers = async (username: string) => {
   const request = `https://api.twitter.com/1.1/followers/ids.json?cursor=-1&screen_name=${username}&count=51`;
   const subscDetails = await pingTwitter(request);
-  return subscDetails.data.ids.length > 50;
+  return subscDetails.data.ids.length > process.env.SUBSCRIBERS_COUNT;
 };
 
 export const checkUserExists = async (username: string) => {
