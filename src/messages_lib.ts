@@ -1,18 +1,16 @@
 const msg = {
-  takePart1:
-    "How to participate:\n\n" +
+  takePart1: `How to participate:\n\n" +
     "1️⃣ Make sure you have at least 50 followers on Twitter.\n" +
     "2️⃣ Add your Waves address to your Twitter profile.\n" +
     "3️⃣ Follow Swop.fi on [Twitter](https://twitter.com/swopfi)\n" +
-    "4️⃣ Retweet the status: link1\n" +
-    "5️⃣ Join Swop.fi group in *Telegram*(https://t.me/swopfisupport)\n",
-  takePart2:
-    "How to participate:\n\n" +
+    "4️⃣ Retweet the status: ${process.env.LINK1}\n" +
+    "5️⃣ Join Swop.fi group in *Telegram*(https://t.me/swopfisupport)\n`,
+  takePart2: `How to participate:\n\n" +
     "1️⃣ Make sure you have at least 50 followers on Twitter.\n" +
     "2️⃣ Add your Waves address to your Twitter profile.\n" +
     "3️⃣ Follow Swop.fi on [Twitter](https://twitter.com/swopfi)\n" +
-    "4️⃣ Retweet the status: link2\n" +
-    "5️⃣ Join Swop.fi group in [Telegram](https://t.me/swopfisupport) \n",
+    "4️⃣ Retweet the status: ${process.env.LINK2}\n" +
+    "5️⃣ Join Swop.fi group in [Telegram](https://t.me/swopfisupport) \n`,
   allCompaniesAreFinished:
     "Sorry, all the campaigns are finished. See you on next Launchpad!\n",
   triggerCheck: "Thank you! Now tell me your username on Twitter",

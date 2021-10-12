@@ -2,7 +2,6 @@ import axios from "axios";
 import telegramService from "./telegramService";
 import { verifyAddress } from "@waves/ts-lib-crypto";
 
-const swopfiTwitterId = 1321498483451432961;
 const swopfiTelegram = "@swopfisupport";
 const swopfiTweetId = 1443961943686098957;
 
