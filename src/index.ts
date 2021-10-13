@@ -16,7 +16,7 @@ initMongo().then();
 const parse_mode = "Markdown";
 
 telegramService.telegram.onText(/\/start/, async ({ from }) => {
-  let text;
+  let text = "";
   if (process.env.CAMPAING === "1" || process.env.CAMPAING === "2") {
   } else {
     text = msg.allCompaniesAreFinished;
