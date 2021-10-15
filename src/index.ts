@@ -67,8 +67,11 @@ telegramService.telegram.on(
         telegramId: from.id,
       });
 
-      if (findCopies) {
-        await telegramService.telegram.sendMessage(from.id, msg.noFreePlaces);
+      if (findCopies.length >= 1) {
+        await telegramService.telegram.sendMessage(
+          from.id,
+          "You are already taking a part"
+        );
         return;
       }
       if (users.length >= 500) {
