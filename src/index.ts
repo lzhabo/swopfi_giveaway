@@ -56,7 +56,9 @@ telegramService.telegram.on(
       await checkTelegram(from.id.toString()),
       await checkUserTwitterSubscribers(twitterUsername),
       await checkIfUserRetweeted(twitterUsername),
+      await getAddressFromDescription(twitterUsername),
     ]);
+
     if (success.every((v) => v)) {
       const walletAddress = await getAddressFromDescription(twitterUsername);
       const users = await User.find({ campaign: process.env.CAMPAIGN });
@@ -81,10 +83,24 @@ telegramService.telegram.on(
       });
       await telegramService.telegram.sendMessage(from.id, msg.success);
     } else {
-      await telegramService.telegram.sendMessage(
-        from.id,
-        msg.pleaseDoAllRequiredRules
-      );
+      let noMsg =
+        "Sorry, the quest is not completed. These requirements are still not met:\n\n";
+      let num = 1;
+      if (!success[0]) {
+        noMsg += `${num++}. Join Swop.fi group in [Telegram](https://t.me/swopfisupport)\n`;
+      }
+      if (!success[1]) {
+        noMsg += `${num++}. You should have more than 50 followers\n`;
+      }
+      if (!success[2]) {
+        noMsg += `${num++}. Retweet the [status](${process.env.LINK})\n`;
+      }
+      if (!success[3]) {
+        noMsg += `${num++}. Add your Waves address to your Twitter profile.\n`;
+      }
+      await telegramService.telegram.sendMessage(from.id, noMsg, {
+        parse_mode,
+      });
     }
   }
 );
