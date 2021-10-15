@@ -93,7 +93,9 @@ telegramService.telegram.on(
         noMsg += `${num++}. Join Swop.fi group in [Telegram](https://t.me/swopfisupport)\n`;
       }
       if (!success[1]) {
-        noMsg += `${num++}. You should have more than 50 followers\n`;
+        noMsg += `${num++}. You should have more than ${
+          process.env.SUBSCRIBERS_COUNT
+        } followers\n`;
       }
       if (!success[2]) {
         noMsg += `${num++}. Retweet the [status](${process.env.LINK})\n`;
@@ -103,6 +105,9 @@ telegramService.telegram.on(
       }
       await telegramService.telegram.sendMessage(from.id, noMsg, {
         parse_mode,
+        reply_markup: {
+          keyboard: [[{ text: msg.ihavedoneitall }]],
+        },
       });
     }
   }
