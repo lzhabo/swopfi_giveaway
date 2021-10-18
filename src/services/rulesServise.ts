@@ -54,7 +54,7 @@ export const checkTelegram = async (telegramId: string): Promise<boolean> => {
       process.env.TELEGRAM_CHAT,
       telegramId
     );
-    return res.status === "member";
+    return res.status === "member" || res.status === "administrator";
   } catch (e) {
     console.log("checkTelegram failed");
     return false;
