@@ -36,7 +36,6 @@ export const getAddressFromDescription = async (username: string) => {
     const request = `https://api.twitter.com/2/users/by/username/${username}?user.fields=created_at,description`;
     const res = await pingTwitter(request);
     if (res.data.errors) {
-      console.log("getAddressFromDescription failed");
       return false;
     }
     return res.data.data.description

@@ -1,5 +1,5 @@
-import { initMongo } from "./services/mongo";
 import telegramService from "./services/telegramService";
+import models from "../src/models";
 import msg from "./messages_lib";
 import {
   checkIfUserRetweeted,
@@ -8,10 +8,8 @@ import {
   checkUserTwitterSubscribers,
   getAddressFromDescription,
 } from "./services/rulesServise";
-import { User } from "./models/User";
 
 require("dotenv").config();
-initMongo().then();
 
 const parse_mode = "Markdown";
 
@@ -60,11 +58,17 @@ telegramService.telegram.on(
     ]);
 
     if (success.every((v) => v)) {
+      const campaing = process.env.CAMPAING;
       const walletAddress = await getAddressFromDescription(twitterUsername);
-      const users = await User.find({ campaign: process.env.CAMPAIGN });
-      const findCopies = await User.find({
-        campaign: process.env.CAMPAIGN,
-        telegramId: from.id,
+      const users = await models.participant.findAll({
+        where: { campaign: campaing },
+      });
+
+      const findCopies = await models.participant.findAll({
+        where: {
+          campaign: campaing,
+          telegramId: from.id.toString(),
+        },
       });
 
       if (findCopies.length >= 1) {
@@ -78,11 +82,11 @@ telegramService.telegram.on(
         await telegramService.telegram.sendMessage(from.id, msg.noFreePlaces);
         return;
       }
-      await User.create({
-        telegramId: from.id,
+      await models.participant.create({
+        telegramId: from.id.toString(),
         walletAddress,
         twitterUsername,
-        campaign: process.env.CAMPAIGN,
+        campaign: campaing,
       });
       await telegramService.telegram.sendMessage(from.id, msg.success);
     } else {
