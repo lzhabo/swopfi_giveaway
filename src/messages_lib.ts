@@ -1,6 +1,6 @@
 const msg = {
   takePart: `How to participate:\n
-  1️⃣ Make sure you have at least 50 followers on Twitter.
+  1️⃣ Make sure you have at least ${process.env.SUBSCRIBERS_COUNT} followers on Twitter.
   2️⃣ Add your Waves address to your Twitter profile.
   3️⃣ Follow Swop.fi on [Twitter](https://twitter.com/swopfi)
   4️⃣ Retweet the [status](${process.env.LINK})
